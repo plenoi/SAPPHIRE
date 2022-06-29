@@ -352,6 +352,28 @@ def CTDT(fastas, **kw):
         encodings.append(code)
     return np.array(encodings, dtype=float), header
 
+file = open('PLS.py','w')
+file.write('import numpy as np'+"\n")
+file.write('from sklearn.cross_decomposition import PLSRegression'+"\n")
+file.write('from sklearn.base import BaseEstimator, ClassifierMixin'+"\n")
+file.write('class PLS(BaseEstimator, ClassifierMixin):'+"\n")
+file.write('    def __init__(self):'+"\n")
+file.write('        self.clf = PLSRegression(n_components=2)'+"\n")
+file.write('    def fit(self, X, y):'+"\n")
+file.write('        self.clf.fit(X,y)'+"\n")
+file.write('        return self'+"\n")
+file.write('    def predict(self, X):'+"\n")
+file.write('        pr = [np.round(np.abs(item[0])) for item in self.clf.predict(X)]'+"\n")
+file.write('        return pr'+"\n")
+file.write('    def predict_proba(self, X):'+"\n")
+file.write('        p_all = []'+"\n")
+file.write('        p_all.append([1-np.abs(item[0]) for item in self.clf.predict(X)])'+"\n")
+file.write('        p_all.append([np.abs(item[0]) for item in self.clf.predict(X)])'+"\n")
+file.write('        return np.transpose(np.array(p_all))'+"\n")
+file.close()
+
+from PLS import PLS
+
 fasta = read_fasta('./input/seq.fasta')
 pssm_composition = pd.read_csv('./input/pssm_composition.csv', header=None)
 rpm_pssm = pd.read_csv('./input/rpm_pssm.csv', header=None)
